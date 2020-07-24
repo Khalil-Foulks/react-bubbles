@@ -37,7 +37,7 @@ const ColorList = ({ colors, updateColors }) => {
 
   const deleteColor = color => {
     // make a delete request to delete this color
-    
+
     axiosWithAuth()
     .delete(`http://localhost:5000/api/colors/${color.id}`)
     .then(res => {
@@ -46,6 +46,17 @@ const ColorList = ({ colors, updateColors }) => {
       updateColors(newColorArr)
     })
   };
+
+  const addColor = e => {
+    e.preventDefault();
+    axiosWithAuth()
+    .post(`/api/colors`, colorToEdit)
+    .then(res => {
+      console.log("POST DATA", res)
+      updateColors(res.data)
+    })
+
+  }
 
   return (
     <div className="colors-wrap">
@@ -102,6 +113,34 @@ const ColorList = ({ colors, updateColors }) => {
       )}
       <div className="spacer" />
       {/* stretch - build another form here to add a color */}
+      <form onSubmit={addColor}>
+        <legend>add color</legend>
+        <label>
+          color name:
+          <input
+            onChange={e =>
+              setColorToEdit({ ...colorToEdit, color: e.target.value })
+            }
+            value={colorToEdit.color}
+          />
+        </label>
+        <label>
+          hex code: 
+          <input
+            onChange={e =>
+              setColorToEdit({
+                ...colorToEdit,
+                code: { hex: e.target.value }
+              })
+            }
+            value={colorToEdit.code.hex}
+          />
+        </label>
+        <div className="button-row">
+          <button type="submit">add</button>
+          <button onClick={() => setEditing(false)}>cancel</button>
+        </div>
+      </form>
     </div>
   );
 };
